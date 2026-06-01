@@ -1,0 +1,84 @@
+.tiptap-editor .ProseMirror {
+  outline: none;
+  min-height: 60vh;
+  padding: 1.5rem;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--foreground);
+}
+
+.tiptap-editor .ProseMirror > * + * {
+  margin-top: 0.75em;
+}
+
+.tiptap-editor .ProseMirror h1,
+.tiptap-editor .ProseMirror h2,
+.tiptap-editor .ProseMirror h3 {
+  font-family: var(--font-playfair);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.tiptap-editor .ProseMirror h1 { font-size: 2rem; }
+.tiptap-editor .ProseMirror h2 { font-size: 1.5rem; }
+.tiptap-editor .ProseMirror h3 { font-size: 1.25rem; }
+
+.tiptap-editor .ProseMirror p.is-editor-empty:first-child::before {
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.tiptap-editor .ProseMirror blockquote {
+  border-left: 3px solid var(--border);
+  padding-left: 1rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.tiptap-editor .ProseMirror ul,
+.tiptap-editor .ProseMirror ol {
+  padding-left: 1.5rem;
+}
+
+.tiptap-editor .ProseMirror li + li {
+  margin-top: 0.25em;
+}
+
+.tiptap-editor .ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+  overflow: hidden;
+}
+
+.tiptap-editor .ProseMirror table td,
+.tiptap-editor .ProseMirror table th {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  position: relative;
+}
+
+.tiptap-editor .ProseMirror table th {
+  background: var(--muted);
+  font-weight: 600;
+}
+
+.tiptap-editor .ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.tiptap-editor .ProseMirror mark {
+  background-color: #fef08a;
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+.tiptap-editor .ProseMirror a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
