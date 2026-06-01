@@ -18,7 +18,7 @@ export async function trackClick(linkId: string, request: Request) {
   const ua = request.headers.get("user-agent") ?? "";
   const referer = request.headers.get("referer") ?? "";
 
-  await supabase.from("link_clicks").insert({
+  await supabase.from("click_events").insert({
     link_id: linkId,
     ip_hash: ip,
     user_agent: ua,

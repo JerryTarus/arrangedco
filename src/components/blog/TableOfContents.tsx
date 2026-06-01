@@ -21,6 +21,7 @@ function extractHeadings(content: Json | null): Heading[] {
     .filter((n) => n.type === "heading" && (n.attrs?.level ?? 0) <= 3)
     .map((n) => {
       const text = n.content?.map((c) => c.text ?? "").join("") ?? "";
+      // Must match the id derivation in tiptapToHtml → addHeadingIds
       const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
       return { id, text, level: n.attrs?.level ?? 2 };
     });
@@ -35,23 +36,29 @@ export function TableOfContents({ content }: Props) {
   if (!headings.length) return null;
 
   return (
-    <nav className="sticky top-24 text-sm space-y-1">
-      <p className="font-semibold text-xs uppercase tracking-wider text-muted-foreground mb-3">
+    <nav className="sticky top-[96px] max-h-[calc(100vh-120px)] overflow-y-auto" aria-label="Table of contents">
+      <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-ink/35">
         Contents
       </p>
-      {headings.map((h) => (
-        <a
-          key={h.id}
-          href={`#${h.id}`}
-          className={cn(
-            "block py-1 transition-colors hover:text-primary",
-            h.level === 3 && "pl-3",
-            activeId === h.id ? "text-primary font-medium" : "text-muted-foreground",
-          )}
-        >
-          {h.text}
-        </a>
-      ))}
+      <ul className="space-y-0.5">
+        {headings.map((h) => (
+          <li key={h.id}>
+            <a
+              href={`#${h.id}`}
+              className={cn(
+                "block rounded-md py-1.5 text-sm transition-colors duration-150",
+                h.level === 3 && "pl-3 text-[0.8rem]",
+                h.level !== 3 && "pl-0",
+                activeId === h.id
+                  ? "font-medium text-terracotta"
+                  : "text-ink/45 hover:text-ink/70",
+              )}
+            >
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ul>
     </nav>
   );
 }

@@ -1,54 +1,87 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 import { mainNav } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { MobileMenu } from "./MobileMenu";
 
 export function Navbar() {
-  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <>
-      <header
-        className={cn(
-          "sticky top-0 z-50 w-full border-b backdrop-blur-md",
-          "bg-background/80 supports-[backdrop-filter]:bg-background/60",
-        )}
-      >
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="font-playfair font-bold text-xl tracking-tight">
+    <header className="sticky top-0 z-50 w-full border-b border-[#3D3834]/10 bg-[#FAF8F5]/85 backdrop-blur-[12px]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/*
+          Three-column grid keeps the wordmark left-anchored,
+          nav links truly centered, and CTA right-anchored
+          regardless of their respective widths.
+        */}
+        <div className="grid h-16 grid-cols-[1fr_auto_1fr] items-center md:h-[72px]">
+
+          {/* ── Wordmark ── */}
+          <Link
+            href="/"
+            className="font-serif text-[1.3rem] font-semibold leading-none tracking-tight text-terracotta"
+          >
             {siteConfig.name}
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
+          {/* ── Desktop nav ── */}
+          <nav className="hidden items-center gap-0.5 md:flex" aria-label="Main">
             {mainNav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm px-3 py-2 rounded-md hover:bg-accent transition-colors"
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-sm font-medium tracking-wide transition-colors duration-150",
+                  pathname === item.href
+                    ? "text-terracotta"
+                    : "text-ink/60 hover:text-ink",
+                )}
               >
                 {item.label}
               </Link>
             ))}
           </nav>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setOpen(true)}
-            aria-label="Open menu"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
+          {/* ── Right: CTA + hamburger ── */}
+          <div className="flex items-center justify-end gap-3">
+            <Link
+              href="/newsletter"
+              className="hidden rounded-xl bg-cta-gradient px-4 py-2 text-sm font-medium text-white shadow-sm transition-opacity hover:opacity-90 active:opacity-75 md:inline-flex"
+            >
+              Newsletter
+            </Link>
+
+            <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+              <SheetTrigger
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md text-ink/60 transition-colors hover:bg-ink/5 hover:text-ink md:hidden"
+                aria-label="Open menu"
+              >
+                <Menu className="h-5 w-5" />
+              </SheetTrigger>
+
+              <SheetContent
+                side="right"
+                className="w-full border-l border-ink/10 bg-[#FAF8F5] p-0 sm:w-[320px]"
+                showCloseButton={false}
+              >
+                <MobileMenu
+                  pathname={pathname}
+                  onClose={() => setDrawerOpen(false)}
+                />
+              </SheetContent>
+            </Sheet>
+          </div>
+
         </div>
-      </header>
-      <MobileMenu open={open} onClose={() => setOpen(false)} />
-    </>
+      </div>
+    </header>
   );
 }
