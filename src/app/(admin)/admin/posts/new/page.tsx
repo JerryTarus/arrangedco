@@ -1,21 +1,26 @@
-import { TipTapEditor } from "@/components/editor/TipTapEditor";
-import { PostSettings } from "@/components/editor/PostSettings";
 import { createClient } from "@/lib/supabase/server";
+import { NewPostClient } from "@/components/editor/NewPostClient";
 
 export default async function NewPostPage() {
-  const supabase = await createClient();
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("id, name");
+  const categories: { id: string; name: string }[]            = [];
+  const tags:       { id: string; name: string; slug: string }[] = [];
 
-  return (
-    <div className="flex h-[calc(100vh-56px)] overflow-hidden">
-      <div className="flex-1 overflow-y-auto">
-        <TipTapEditor />
-      </div>
-      <aside className="w-72 border-l bg-muted/30 overflow-y-auto shrink-0">
-        <PostSettings categories={categories ?? []} />
-      </aside>
-    </div>
-  );
+  if (
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    try {
+      const supabase = await createClient();
+      const [catsResult, tagsResult] = await Promise.all([
+        supabase.from("categories").select("id, name").order("name"),
+        supabase.from("tags").select("id, name, slug").order("name"),
+      ]);
+      categories.push(...(catsResult.data ?? []));
+      tags.push(...(tagsResult.data ?? []));
+    } catch {
+      // Non-fatal — editor still usable without categories/tags
+    }
+  }
+
+  return <NewPostClient categories={categories} tags={tags} />;
 }
